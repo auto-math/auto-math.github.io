@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Math a day</title>
+  <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"> -->
+  <script src="https://kit.fontawesome.com/7390e2ec9d.js" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+
+  <style>
+    .body {
+      margin: 0;
+      /* Remove default margin */
+    }
+
+    .fa-whatsapp {
+      color: #3df56b;
+    }
+
+    .fa-link {
+      color: #66abe2;
+    }
+
+    .fa-folder {
+      color: #f3c547f2;
+    }
+
+    .iframe {
+      display: block;
+      /* iframes are inline by default */
+      height: 100vh;
+      /* Set height to 100% of the viewport height */
+      width: 100vw;
+      /* Set width to 100% of the viewport width */
+      border: none;
+      /* Remove default border */
+      background: #000;
+    }
+  </style>
+  <script type="text/javascript">
+    $(document).ready(function () {
+
+      $.getJSON('toc.json', function (toc) {
+        $.jstree.defaults.core.themes.responsive = true;
+        window.appscriptLink = toc["appscriptLink"]
+        $('#toc').jstree({
+          plugins: ["sort", "wholerow", "search", "unique", "types", "contextmenu"],
+          "types": {
+            "default": {
+              "icon": "fa fa-solid fa-folder"
+            },
+            "leaf": {
+              "icon": "fa fa-solid fa-link"
+            }
+          },
+          "search": {
+            "case_sensitive": false,
+            "show_only_matches": true
+          },
+          'core': {
+            "themes": {
+              "responsive": true
+            },
+            'data': toc["data"]
+          },
+          "contextmenu": {
+            "items": function ($node) {
+              if ($node && $node.type !== "leaf")
+                return undefined
+              else
+                return {
+                  "Whatsapp": {
+                    "label": "Share in Whatsapp",
+                    "icon": "fa-brands fa-whatsapp",
+                    "data": $node,
+                    "action": function (obj) {
+                      alert(obj)
+                    }
+                  },
+                  "Copy to Clipboard": {
+                    "label": "Copy to Clipboard",
+                    "icon": "fa fa-copy",
+                    "data": $node,
+                    "action": function (obj) {
+                      navigator.clipboard.writeText(window.appscriptLink + "?testid="+ obj.item.data.original.sheetId + "&batch=" + obj.item.data.original.batch);
+                    }
+                  }
+                };
+            }
+          }
+        });
+        
+        $("#search").keyup(function () {
+          var searchString = $(this).val();
+          $('#toc').jstree('search', searchString);
+        })
+      });
+
+
+    });
+  </script>
+</head>
+
+<body>
+  <div><i class="fa fa-search"></i> Search : <input id="search" class="search-input" /> </div>
+  <h1>List of classes and homeworks configured</h1>
+  <div id="toc"></div>
+  <!-- <iframe style="border:none;"
+    src="?testid=1aRdIoqPtvuptuhTVpi2ADjYgjt3gPOvi91lBF8X9PRg&batch=Matrix_Response"></iframe> -->
+</body>
+
+</html>
